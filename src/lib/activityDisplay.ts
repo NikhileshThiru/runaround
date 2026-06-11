@@ -40,14 +40,14 @@ export function formatSportName(sportType: string): string {
  */
 export function sportAccentColor(sportType: string): string {
   const type = sportType.toLowerCase()
-  if (type.includes('run')) return '#a855f7'
-  if (type.includes('ride') || type.includes('cycle') || type.includes('velomobile')) return '#66b8c4'
-  if (/tennis|pickle|badminton|squash|racquet/.test(type)) return '#f0a868'
-  if (/swim|row|kayak|canoe|surf|paddl|sail|kitesurf|windsurf|water/.test(type)) return '#5fa8de'
-  if (/ski|snowboard|skate|snowshoe|ice/.test(type)) return '#9fd0e8'
-  if (/weight|crossfit|interval|workout|yoga|pilates|elliptical|stair|climb/.test(type)) return '#de7898'
-  if (/walk|hike|golf/.test(type)) return '#72d4aa'
-  return '#8f93a1'
+  if (type.includes('run')) return '#27c0e8'
+  if (type.includes('ride') || type.includes('cycle') || type.includes('velomobile')) return '#56d8a4'
+  if (/tennis|pickle|badminton|squash|racquet/.test(type)) return '#ffb454'
+  if (/swim|row|kayak|canoe|surf|paddl|sail|kitesurf|windsurf|water/.test(type)) return '#6d9ef7'
+  if (/ski|snowboard|skate|snowshoe|ice/.test(type)) return '#b7e7f7'
+  if (/weight|crossfit|interval|workout|yoga|pilates|elliptical|stair|climb/.test(type)) return '#f47867'
+  if (/walk|hike|golf/.test(type)) return '#a3c98b'
+  return '#8a94a0'
 }
 
 export function localActivitySummary(activity: StravaActivitySummary): string {

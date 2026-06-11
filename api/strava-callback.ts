@@ -1,7 +1,7 @@
-import type { ApiRequest, ApiResponse } from './_lib/http'
-import { clearCookie, cookies, queryValue, redirect, sendError } from './_lib/http'
-import { isOwnerRequest, OAUTH_STATE_COOKIE, safeEqual } from './_lib/security'
-import { setStravaTokenCookie } from './_lib/stravaTokens'
+import type { ApiRequest, ApiResponse } from './_lib/http.js'
+import { clearCookie, cookies, queryValue, redirect, sendError } from './_lib/http.js'
+import { isOwnerRequest, OAUTH_STATE_COOKIE, safeEqual } from './_lib/security.js'
+import { setStravaTokenCookie } from './_lib/stravaTokens.js'
 
 interface TokenExchangeResponse {
   access_token: string

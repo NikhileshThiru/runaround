@@ -1,11 +1,11 @@
-import type { ApiRequest, ApiResponse } from './http'
-import { cookies, setCookie } from './http'
+import type { ApiRequest, ApiResponse } from './http.js'
+import { cookies, setCookie } from './http.js'
 import {
   decryptStravaTokens,
   encryptStravaTokens,
   STRAVA_TOKEN_COOKIE,
   type StravaTokenSet,
-} from './security'
+} from './security.js'
 
 interface StravaTokenResponse {
   access_token: string

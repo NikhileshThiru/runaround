@@ -1,6 +1,6 @@
 # RunAround
 
-[![CI](https://github.com/GITHUB_USERNAME/runaround/actions/workflows/ci.yml/badge.svg)](https://github.com/GITHUB_USERNAME/runaround/actions/workflows/ci.yml)
+[![CI](https://github.com/NikhileshThiru/runaround/actions/workflows/ci.yml/badge.svg)](https://github.com/NikhileshThiru/runaround/actions/workflows/ci.yml)
 **Live demo:** [run-around.vercel.app](https://run-around.vercel.app)
 
 RunAround is a single-athlete running intelligence platform that turns Strava history into an adaptive coaching dashboard and a long-term 3D journey through every U.S. state and around the world.
@@ -16,6 +16,7 @@ The application is designed as a portfolio project and a real personal tool. Pub
 - Deterministic coaching safety constraints around fatigue, hard-effort spacing, and mileage progression
 - Gemini structured output behind an owner-only serverless proxy
 - Sanitized public portfolio mode without GPS data, Strava identifiers, tokens, or private metadata
+- Strava-style public kudos counter backed by Upstash Redis with salted-hash visitor dedupe
 
 ## Architecture
 
@@ -48,6 +49,7 @@ flowchart LR
 - Latitude/longitude streams are not requested or stored in the MVP.
 - Gemini receives strict metric allowlists without activity names, Strava IDs, maps, coordinates, or raw provider extras.
 - Public snapshots exclude athlete IDs, Strava activity IDs, activity names, exact times, GPS data, raw streams, gear, and descriptions.
+- The kudos counter stores no personal data: visitors are deduplicated by a salted SHA-256 hash of the request IP that expires after 24 hours, and the endpoint degrades to a hidden control when the datastore is absent.
 
 ## Route Algorithm
 

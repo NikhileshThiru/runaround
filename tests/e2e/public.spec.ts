@@ -30,6 +30,37 @@ test('mobile public layout does not overflow horizontally', async ({ page }) => 
   await expect(page.getByRole('link', { name: 'Dashboard' })).toBeVisible()
 })
 
+test('kudos button shows the shared count and accepts a single kudos', async ({ page }) => {
+  let count = 41
+  await page.route('**/api/kudos', (route) => {
+    if (route.request().method() === 'POST') {
+      count += 1
+      return route.fulfill({ json: { count, counted: true } })
+    }
+    return route.fulfill({ json: { count } })
+  })
+  await page.goto('/')
+
+  const button = page.getByRole('button', { name: /give kudos/i })
+  await expect(button).toContainText('41')
+  await button.click()
+  const given = page.getByRole('button', { name: /kudos given/i })
+  await expect(given).toContainText('42')
+  await expect(given).toBeDisabled()
+})
+
+test('kudos button stays hidden when the counter service is unavailable', async ({ page }) => {
+  await page.route('**/api/kudos', (route) => route.fulfill({
+    status: 503,
+    contentType: 'application/json',
+    body: JSON.stringify({ error: 'Kudos is not configured.' }),
+  }))
+  await page.goto('/')
+
+  await expect(page.getByText(/states reached/i)).toBeVisible()
+  await expect(page.getByRole('button', { name: /kudos/i })).toHaveCount(0)
+})
+
 test('owner unlock dialog closes with Escape and restores the page', async ({ page }) => {
   await page.goto('/')
   await page.getByRole('button', { name: 'Owner' }).click()

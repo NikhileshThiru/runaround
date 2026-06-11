@@ -59,20 +59,20 @@ export default function ActivityDetail({
         <div className="flex items-start justify-between gap-4">
           <div>
             <p className="eyebrow">{activity.date}</p>
-            <h2 className="mt-3 font-display text-3xl text-primary">{formatSportName(activity.sportType)}</h2>
+            <h2 className="mt-3 font-display text-2xl font-semibold tracking-tight text-primary">{formatSportName(activity.sportType)}</h2>
           </div>
           <button autoFocus onClick={onClose} className="nav-button text-secondary" aria-label="Close activity detail">Close</button>
         </div>
         <p className="mt-5 text-secondary">{activity.summary}</p>
         {activity.intensity && (
-          <div className="mt-4 rounded-xl border border-white/10 bg-surface/50 p-4">
+          <div className="mt-4 border border-white/10 bg-surface/50 p-3.5">
             <p className="font-mono text-[9px] uppercase tracking-[0.24em] text-secondary">Measured effort · {activity.intensity}</p>
             <p className="mt-2 text-xs leading-relaxed text-secondary">{activity.intensityBasis}</p>
           </div>
         )}
-        {assessmentLoading && <div className="mt-5 h-20 animate-pulse rounded-xl border border-neon/15 bg-neon/5" />}
+        {assessmentLoading && <div className="mt-5 h-20 animate-pulse border border-neon/15 bg-neon/5" />}
         {!assessmentLoading && assessment && (
-          <div className="mt-5 rounded-xl border border-neon/20 bg-neon/5 p-4">
+          <div className="mt-5 border border-neon/20 bg-neon/5 p-3.5">
             <p className="font-mono text-[9px] uppercase tracking-[0.24em] text-glow">AI assessment</p>
             <p className="mt-2 text-sm leading-relaxed text-primary">{assessment}</p>
           </div>
@@ -82,26 +82,26 @@ export default function ActivityDetail({
         )}
         <div className="mt-8 grid grid-cols-2 gap-3 sm:grid-cols-3">
           {metrics.map(([label, value]) => (
-            <div key={label} className="rounded-xl border border-white/10 bg-surface/70 p-4">
+            <div key={label} className="border border-white/10 bg-surface/70 p-3">
               <p className="font-mono text-xs text-primary">{value}</p>
               <p className="mt-2 text-[9px] uppercase tracking-widest text-secondary">{label}</p>
             </div>
           ))}
         </div>
-        {loading && <div className="mt-8 h-52 animate-pulse rounded-2xl border border-white/10 bg-surface/60" />}
+        {loading && <div className="mt-8 h-52 animate-pulse border border-white/10 bg-surface/60" />}
         {!loading && error && (
-          <div className="mt-8 rounded-2xl border border-warning/25 bg-warning/10 p-5 text-sm text-warning">{error}</div>
+          <div className="mt-8 border border-warning/25 bg-warning/10 p-5 text-sm text-warning">{error}</div>
         )}
         {!loading && charts && (
           <div className="mt-8 space-y-4">
-            <MetricChart title="Pace" points={charts.pace} color="#c084fc" unit="/mi" formatter={formatChartPace} reversedY />
-            <MetricChart title="Heart rate" points={charts.heartRate} color="#de7898" unit="bpm" />
-            <MetricChart title="Cadence" points={charts.cadence} color="#72d4aa" unit="spm" />
-            <MetricChart title="Power" points={charts.power} color="#66b8c4" unit="W" />
+            <MetricChart title="Pace" points={charts.pace} color="#67d8f5" unit="/mi" formatter={formatChartPace} reversedY />
+            <MetricChart title="Heart rate" points={charts.heartRate} color="#f47867" unit="bpm" />
+            <MetricChart title="Cadence" points={charts.cadence} color="#56d8a4" unit="spm" />
+            <MetricChart title="Power" points={charts.power} color="#6d9ef7" unit="W" />
           </div>
         )}
         {!loading && !error && !charts && (
-          <div className="mt-8 rounded-2xl border border-dashed border-white/10 p-8 text-center text-sm text-secondary">
+          <div className="mt-8 border border-dashed border-white/10 p-8 text-center text-sm text-secondary">
             Detailed chart streams are unavailable in this view.
           </div>
         )}

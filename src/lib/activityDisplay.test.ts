@@ -33,7 +33,7 @@ describe('sportAccentColor', () => {
   })
 
   it('returns the neutral accent for unknown types', () => {
-    expect(sportAccentColor('Wheelchair')).toBe('#8f93a1')
+    expect(sportAccentColor('Wheelchair')).toBe('#8a94a0')
   })
 
   it('keeps categories visually distinct', () => {

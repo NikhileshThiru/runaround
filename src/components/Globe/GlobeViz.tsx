@@ -110,11 +110,11 @@ export default function GlobeViz({ lifetimeMiles }: GlobeVizProps) {
   const checkpoint = journey.currentSegment?.from ?? journey.completedMilestones.at(-1)
 
   return (
-    <section className="panel relative overflow-hidden rounded-2xl bg-[#05070b]">
+    <section className="panel relative overflow-hidden bg-[#04080d]">
       <div className="instrument-frame pointer-events-none absolute inset-0 z-[1] opacity-25" />
-      <div className="pointer-events-none absolute left-5 top-5 z-10 rounded-md border border-white/10 bg-[#05070b]/78 px-3 py-2 backdrop-blur-sm">
+      <div className="pointer-events-none absolute left-4 top-4 z-10 border border-white/10 bg-[#04080d]/80 px-3 py-2 backdrop-blur-sm">
         <p className="font-mono text-[9px] uppercase tracking-[0.22em] text-secondary">Current checkpoint</p>
-        <p className="mt-1 font-mono text-xs text-primary">
+        <p className="mt-1 font-mono text-xs text-glow">
           {checkpoint?.city ?? 'Atlanta'}
           {checkpoint?.stateCode ? `, ${checkpoint.stateCode}` : ''}
         </p>
@@ -136,7 +136,7 @@ export default function GlobeViz({ lifetimeMiles }: GlobeVizProps) {
         )}
         {hover && (
           <div
-            className="pointer-events-none absolute z-20 -translate-x-1/2 -translate-y-full whitespace-nowrap rounded-md border border-white/15 bg-[#05070b]/92 px-3 py-2 backdrop-blur-sm"
+            className="pointer-events-none absolute z-20 -translate-x-1/2 -translate-y-full whitespace-nowrap border border-glow/25 bg-[#04080d]/92 px-3 py-2 backdrop-blur-sm"
             style={{ left: hover.x, top: hover.y - 14 }}
             role="status"
           >
@@ -153,7 +153,7 @@ export default function GlobeViz({ lifetimeMiles }: GlobeVizProps) {
         )}
       </div>
 
-      <div className="relative z-10 grid gap-px border-t border-white/[0.08] bg-white/[0.08] sm:absolute sm:bottom-5 sm:left-5 sm:right-5 sm:grid-cols-2 sm:gap-3 sm:border-0 sm:bg-transparent lg:grid-cols-4">
+      <div className="relative z-10 grid gap-px border-t border-white/[0.08] bg-white/[0.08] sm:absolute sm:bottom-4 sm:left-4 sm:right-4 sm:grid-cols-2 sm:gap-2 sm:border-0 sm:bg-transparent lg:grid-cols-4">
         <Metric label="States reached" value={`${journey.completedStates.length} / 50`} />
         <Metric label="Journey" value={`${(journey.progress * 100).toFixed(1)}%`} />
         <Metric
@@ -173,9 +173,9 @@ export default function GlobeViz({ lifetimeMiles }: GlobeVizProps) {
 
 function Metric({ label, value }: { label: string; value: string }) {
   return (
-    <div className="bg-[#080b11] px-5 py-4 backdrop-blur-md sm:rounded-lg sm:border sm:border-white/10 sm:bg-[#080b11]/88 sm:px-4 sm:py-3">
-      <p className="font-mono text-[9px] uppercase tracking-[0.24em] text-secondary">{label}</p>
-      <p className="mt-1.5 truncate font-mono text-sm font-medium text-primary">{value}</p>
+    <div className="bg-[#070d14] px-5 py-3.5 backdrop-blur-md sm:border sm:border-white/10 sm:bg-[#070d14]/88 sm:px-4 sm:py-2.5">
+      <p className="font-mono text-[8px] uppercase tracking-[0.24em] text-secondary">{label}</p>
+      <p className="mt-1 truncate font-mono text-sm font-medium text-primary">{value}</p>
     </div>
   )
 }

@@ -1,0 +1,7 @@
+# Test files must not deploy as serverless functions.
+api/**/*.test.ts
+src/**/*.test.ts
+src/**/*.test.tsx
+tests/
+playwright-report/
+test-results/

@@ -31,8 +31,8 @@ export default function WeatherWidget({ enabled = true }: { enabled?: boolean })
 
   if (error) {
     return (
-      <section className="panel p-6">
-        <p className="instrument-label">Local conditions</p>
+      <section className="panel p-5">
+        <p className="console-label"><b>B</b> Local conditions</p>
         <p className="mt-4 text-sm leading-relaxed text-secondary">Weather hidden. {error}</p>
       </section>
     )
@@ -45,23 +45,23 @@ export default function WeatherWidget({ enabled = true }: { enabled?: boolean })
   const conditions = runningConditions(current)
   const verdictColor = conditions.level === 'good' ? 'text-success' : conditions.level === 'poor' ? 'text-warning' : 'text-glow'
   return (
-    <section className="panel p-6">
-      <p className="instrument-label">Local conditions</p>
+    <section className="panel p-5">
+      <p className="console-label"><b>B</b> Local conditions</p>
       <div className="mt-4 flex items-end justify-between gap-3">
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-3.5">
           <WeatherIcon code={current.weather_code} />
           <div>
-            <p className="font-mono text-4xl text-primary">{Math.round(current.apparent_temperature)}°</p>
+            <p className="font-mono text-3xl text-primary">{Math.round(current.apparent_temperature)}°</p>
             <p className="mt-1 text-xs text-secondary">Feels like · {weatherCondition(current.weather_code)}</p>
           </div>
         </div>
-        <div className="text-right font-mono text-xs text-secondary">
+        <div className="text-right font-mono text-[11px] text-secondary">
           <p>{Math.round(current.precipitation_probability)}% rain</p>
           <p className="mt-1">UV {current.uv_index.toFixed(1)}</p>
           <p className="mt-1">{Math.round(current.wind_speed_10m)} mph wind</p>
         </div>
       </div>
-      <p className={`mt-5 border-t border-white/5 pt-4 text-sm leading-relaxed ${verdictColor}`}>
+      <p className={`mt-4 border-t border-white/5 pt-3.5 text-sm leading-relaxed ${verdictColor}`}>
         {conditions.verdict}
       </p>
     </section>

@@ -1,7 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import type { ApiRequest, ApiResponse } from './http'
-import { encryptStravaTokens, STRAVA_TOKEN_COOKIE } from './security'
-import { currentStravaTokens } from './stravaTokens'
+import type { ApiRequest, ApiResponse } from './http.js'
+import { encryptStravaTokens, STRAVA_TOKEN_COOKIE } from './security.js'
+import { currentStravaTokens } from './stravaTokens.js'
 
 function responseRecorder() {
   const headers = new Map<string, number | string | string[]>()

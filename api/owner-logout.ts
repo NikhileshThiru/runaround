@@ -1,6 +1,6 @@
-import type { ApiRequest, ApiResponse } from './_lib/http'
-import { clearCookie, requireSameOrigin, sendError } from './_lib/http'
-import { OAUTH_STATE_COOKIE, OWNER_COOKIE, STRAVA_TOKEN_COOKIE } from './_lib/security'
+import type { ApiRequest, ApiResponse } from './_lib/http.js'
+import { clearCookie, requireSameOrigin, sendError } from './_lib/http.js'
+import { OAUTH_STATE_COOKIE, OWNER_COOKIE, STRAVA_TOKEN_COOKIE } from './_lib/security.js'
 
 export default function handler(request: ApiRequest, response: ApiResponse): void {
   if (request.method !== 'POST') return sendError(response, 405, 'Method not allowed.')

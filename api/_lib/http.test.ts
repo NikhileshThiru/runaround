@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { requireSameOrigin, type ApiRequest } from './http'
+import { requireSameOrigin, type ApiRequest } from './http.js'
 
 describe('same-origin validation', () => {
   it('accepts an exact origin and host match', () => {

@@ -7,7 +7,7 @@ import {
   safeEqual,
   verifyOwnerSession,
   verifyPassword,
-} from './security'
+} from './security.js'
 
 describe('security helpers', () => {
   const originalSecret = process.env.SESSION_SECRET

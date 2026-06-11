@@ -7,15 +7,15 @@ export default function ActivityFeed({ activities, onSelect }: {
 }) {
   return (
     <section>
-      <div className="mb-5 flex items-end justify-between">
+      <div className="mb-3 flex items-end justify-between">
         <div>
-          <p className="eyebrow">Movement log</p>
-          <h2 className="mt-2 font-display text-2xl text-primary">Recent activities</h2>
+          <p className="console-label"><b>D</b> Movement log</p>
+          <h2 className="mt-2 font-display text-xl font-semibold tracking-tight text-primary">Recent activities</h2>
         </div>
-        <span className="font-mono text-xs text-secondary">{activities.length} shown</span>
+        <span className="font-mono text-[10px] uppercase tracking-[0.16em] text-secondary">{activities.length} shown</span>
       </div>
       {activities.length ? (
-        <div className="space-y-3">
+        <div className="space-y-2">
           {activities.map((activity) => (
             <ActivityCard key={activity.id} activity={activity} onClick={() => onSelect(activity)} />
           ))}

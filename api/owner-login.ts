@@ -1,6 +1,6 @@
-import type { ApiRequest, ApiResponse } from './_lib/http'
-import { readJsonBody, requireSameOrigin, sendError, setCookie } from './_lib/http'
-import { createOwnerSession, OWNER_COOKIE, verifyPassword } from './_lib/security'
+import type { ApiRequest, ApiResponse } from './_lib/http.js'
+import { readJsonBody, requireSameOrigin, sendError, setCookie } from './_lib/http.js'
+import { createOwnerSession, OWNER_COOKIE, verifyPassword } from './_lib/security.js'
 
 export default function handler(request: ApiRequest, response: ApiResponse): void {
   if (request.method !== 'POST') return sendError(response, 405, 'Method not allowed.')

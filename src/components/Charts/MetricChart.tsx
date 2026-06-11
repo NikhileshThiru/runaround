@@ -28,16 +28,16 @@ export default function MetricChart({
       <div className="mt-4 h-52">
         <ResponsiveContainer width="100%" height="100%">
           <LineChart data={points} margin={{ top: 5, right: 8, bottom: 0, left: -20 }}>
-            <CartesianGrid vertical={false} stroke="rgba(255,255,255,.05)" />
+            <CartesianGrid vertical={false} stroke="rgba(148,184,205,.07)" />
             <XAxis dataKey="index" hide />
-            <YAxis reversed={reversedY} tick={{ fill: '#888899', fontSize: 10 }} tickLine={false} axisLine={false} />
+            <YAxis reversed={reversedY} tick={{ fill: '#7e8c9a', fontSize: 10 }} tickLine={false} axisLine={false} />
             <Tooltip
               formatter={(value) => {
                 const numeric = Number(value)
                 return [formatter ? formatter(numeric) : `${numeric.toFixed(0)} ${unit}`, title]
               }}
               labelFormatter={(index) => `Sample ${Number(index) + 1}`}
-              contentStyle={{ background: '#0b0d13', border: '1px solid rgba(192,132,252,.28)', borderRadius: 8 }}
+              contentStyle={{ background: '#0a111a', border: '1px solid rgba(124,228,255,.25)', borderRadius: 2 }}
             />
             <Line type="monotone" dataKey="value" stroke={color} dot={false} strokeWidth={1.8} connectNulls={false} />
           </LineChart>

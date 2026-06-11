@@ -1,7 +1,7 @@
-import type { ApiRequest, ApiResponse } from './_lib/http'
-import { clearCookie, readJsonBody, requireSameOrigin, sendError } from './_lib/http'
-import { isOwnerRequest, STRAVA_TOKEN_COOKIE } from './_lib/security'
-import { currentStravaTokens } from './_lib/stravaTokens'
+import type { ApiRequest, ApiResponse } from './_lib/http.js'
+import { clearCookie, readJsonBody, requireSameOrigin, sendError } from './_lib/http.js'
+import { isOwnerRequest, STRAVA_TOKEN_COOKIE } from './_lib/security.js'
+import { currentStravaTokens } from './_lib/stravaTokens.js'
 
 const STRAVA_API = 'https://www.strava.com/api/v3'
 const STREAM_KEYS = new Set(['time', 'distance', 'velocity_smooth', 'heartrate', 'cadence', 'watts'])

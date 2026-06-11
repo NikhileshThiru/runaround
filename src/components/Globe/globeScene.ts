@@ -71,9 +71,9 @@ export interface GlobeScene {
   dispose(): void
 }
 
-const ROUTE_COLOR = '#c084fc'
-const ROUTE_GLOW_COLOR = '#a855f7'
-const CURRENT_COLOR = '#f3e8ff'
+const ROUTE_COLOR = '#67d8f5'
+const ROUTE_GLOW_COLOR = '#27c0e8'
+const CURRENT_COLOR = '#ecfbff'
 
 // Layer radii: each vector layer sits a fraction above the opaque sphere so
 // depth testing hides the far side without z-fighting the surface.
@@ -171,8 +171,8 @@ const SPHERE_FRAGMENT_SHADER = /* glsl */ `
   void main() {
     float facing = max(dot(normalize(vNormal), normalize(vViewDirection)), 0.0);
     float fresnel = pow(1.0 - facing, 3.2);
-    vec3 base = vec3(0.020, 0.027, 0.043);
-    vec3 rim = vec3(0.659, 0.522, 0.969);
+    vec3 base = vec3(0.010, 0.022, 0.034);
+    vec3 rim = vec3(0.153, 0.753, 0.910);
     gl_FragColor = vec4(base + rim * fresnel * 0.22, 1.0);
   }
 `
@@ -182,7 +182,7 @@ const ATMOSPHERE_FRAGMENT_SHADER = /* glsl */ `
   varying vec3 vViewDirection;
   void main() {
     float intensity = pow(0.55 - dot(normalize(vNormal), normalize(vViewDirection)), 5.0);
-    vec3 glow = vec3(0.659, 0.522, 0.969);
+    vec3 glow = vec3(0.153, 0.753, 0.910);
     gl_FragColor = vec4(glow, 1.0) * clamp(intensity, 0.0, 1.0) * 0.42;
   }
 `
@@ -249,7 +249,7 @@ export function createGlobeScene(options: GlobeSceneOptions): GlobeScene {
   const plannedRoutePoints = ROUTE.slice(1).flatMap((to, index) =>
     sampleGreatCircleArc(ROUTE[index]!, to).map((point) => toVector3(point, ROUTE_SCALE)))
   const plannedRouteGeometry = new BufferGeometry().setFromPoints(plannedRoutePoints)
-  const plannedRouteMaterial = new LineBasicMaterial({ color: '#9aa0b4', transparent: true, opacity: 0.16 })
+  const plannedRouteMaterial = new LineBasicMaterial({ color: '#94a6b2', transparent: true, opacity: 0.16 })
   scene.add(new Line(plannedRouteGeometry, plannedRouteMaterial))
 
   // The traveled route uses a screen-space line material: pixel-based width
@@ -275,7 +275,7 @@ export function createGlobeScene(options: GlobeSceneOptions): GlobeScene {
   const upcomingMarkerGeometry = new CircleGeometry(0.34, 20)
   const reachedMarkerMaterial = new MeshBasicMaterial({ color: ROUTE_COLOR, side: DoubleSide })
   const upcomingMarkerMaterial = new MeshBasicMaterial({
-    color: '#7c8090',
+    color: '#76838e',
     side: DoubleSide,
     transparent: true,
     opacity: 0.85,
@@ -548,11 +548,11 @@ export function createGlobeScene(options: GlobeSceneOptions): GlobeScene {
 
     boundariesGroup.add(new LineSegments(
       new BufferGeometry().setFromPoints(countryVertices),
-      new LineBasicMaterial({ color: '#b9bdc8', transparent: true, opacity: 0.5 }),
+      new LineBasicMaterial({ color: '#b4c3cd', transparent: true, opacity: 0.5 }),
     ))
     boundariesGroup.add(new LineSegments(
       new BufferGeometry().setFromPoints(stateVertices),
-      new LineBasicMaterial({ color: '#828793', transparent: true, opacity: 0.32 }),
+      new LineBasicMaterial({ color: '#7e8b96', transparent: true, opacity: 0.32 }),
     ))
   }
 

@@ -53,13 +53,13 @@ export default function StatsBar(props: StatsBarProps) {
   ]
 
   return (
-    <section className="panel grid grid-cols-2 overflow-hidden rounded-2xl bg-white/[0.035] sm:grid-cols-3 lg:grid-cols-9" aria-label="Journey and running statistics">
+    <section className="panel grid grid-cols-3 overflow-hidden bg-white/[0.02] sm:grid-cols-5 lg:grid-cols-9" aria-label="Journey and running statistics">
       {stats.map((stat) => (
-        <div key={stat.label} className="border-b border-r border-white/[0.055] px-3 py-5 text-center last:border-r-0 sm:px-4">
+        <div key={stat.label} className="border-b border-r border-white/[0.05] px-3 py-3 last:border-r-0 sm:px-4">
+          <p className="font-mono text-[8px] uppercase tracking-[0.22em] text-secondary">{stat.label}</p>
           {'countTo' in stat
             ? <CountUpStat target={stat.countTo} format={stat.format} />
-            : <p className="font-mono text-sm font-semibold text-primary sm:text-base">{stat.value}</p>}
-          <p className="mt-2 text-[9px] uppercase tracking-[0.22em] text-secondary">{stat.label}</p>
+            : <p className="mt-1 font-mono text-sm font-medium text-primary">{stat.value}</p>}
         </div>
       ))}
     </section>
@@ -68,5 +68,5 @@ export default function StatsBar(props: StatsBarProps) {
 
 function CountUpStat({ target, format }: { target: number; format: (value: number) => string }) {
   const displayed = useCountUp(target)
-  return <p className="font-mono text-sm font-semibold text-primary sm:text-base">{format(displayed)}</p>
+  return <p className="mt-1 font-mono text-sm font-medium text-glow">{format(displayed)}</p>
 }

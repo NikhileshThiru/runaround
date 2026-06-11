@@ -1,20 +1,20 @@
 import { z } from 'zod'
-import type { ApiRequest, ApiResponse } from './_lib/http'
-import { readJsonBody, requireSameOrigin, sendError } from './_lib/http'
-import { isOwnerRequest } from './_lib/security'
+import type { ApiRequest, ApiResponse } from './_lib/http.js'
+import { readJsonBody, requireSameOrigin, sendError } from './_lib/http.js'
+import { isOwnerRequest } from './_lib/security.js'
 import {
   activityAssessmentInputSchema,
   activityDescriptionSchema,
   coachingActivityInputSchema,
   coachingRecommendationSchema,
-} from '../src/schemas/ai'
-import { athleteProfileSchema } from '../src/schemas/athleteProfile'
-import type { AthleteProfile } from '../src/schemas/athleteProfile'
+} from '../src/schemas/ai.js'
+import { athleteProfileSchema } from '../src/schemas/athleteProfile.js'
+import type { AthleteProfile } from '../src/schemas/athleteProfile.js'
 import {
   coachingConstraints,
   deterministicSafeRecommendation,
   validateRecommendationSafety,
-} from '../src/lib/coachingSafety'
+} from '../src/lib/coachingSafety.js'
 
 const recommendationRequestSchema = z.object({
   operation: z.literal('coachingRecommendation'),

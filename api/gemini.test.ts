@@ -1,8 +1,8 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import type { ApiRequest, ApiResponse } from './_lib/http'
-import { createOwnerSession, OWNER_COOKIE } from './_lib/security'
-import { computeAthleteProfile } from '../src/lib/athleteProfile'
-import handler from './gemini'
+import type { ApiRequest, ApiResponse } from './_lib/http.js'
+import { createOwnerSession, OWNER_COOKIE } from './_lib/security.js'
+import { computeAthleteProfile } from '../src/lib/athleteProfile.js'
+import handler from './gemini.js'
 
 function responseRecorder() {
   let statusCode = 200

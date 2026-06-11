@@ -1,7 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { createOwnerSession, OWNER_COOKIE, OAUTH_STATE_COOKIE } from './_lib/security'
-import type { ApiRequest, ApiResponse } from './_lib/http'
-import handler from './strava-callback'
+import { createOwnerSession, OWNER_COOKIE, OAUTH_STATE_COOKIE } from './_lib/security.js'
+import type { ApiRequest, ApiResponse } from './_lib/http.js'
+import handler from './strava-callback.js'
 
 function responseRecorder() {
   let statusCode = 200

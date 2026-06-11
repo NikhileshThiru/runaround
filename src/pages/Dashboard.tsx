@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 import ActivityDetail from '@/components/Dashboard/ActivityDetail'
 import ActivityFeed from '@/components/Dashboard/ActivityFeed'
 import CoachingCard from '@/components/Dashboard/CoachingCard'
+import TelemetryStrip from '@/components/Dashboard/TelemetryStrip'
 import TrainingTrends from '@/components/Dashboard/TrainingTrends'
 import WeatherWidget from '@/components/Dashboard/WeatherWidget'
 import Navbar from '@/components/shared/Navbar'
@@ -117,23 +118,26 @@ export default function Dashboard() {
   return (
     <div className="min-h-screen text-primary">
       <Navbar />
-      <main className="mx-auto max-w-7xl space-y-10 px-5 py-9 lg:px-8 lg:py-12">
-        <header className="flex flex-col justify-between gap-4 border-b border-white/[0.07] pb-7 sm:flex-row sm:items-end">
+      <main className="mx-auto max-w-7xl space-y-6 px-5 py-6 lg:px-8">
+        <header className="flex items-end justify-between gap-4 border-b border-white/[0.07] pb-3">
           <div>
-            <p className="eyebrow">Training intelligence</p>
-            <h1 className="mt-3 font-display text-3xl text-primary sm:text-4xl">Performance console</h1>
+            <p className="console-label"><b>02</b> Training intelligence</p>
+            <h1 className="mt-2 font-display text-2xl font-semibold tracking-tight text-primary sm:text-3xl">
+              Performance console
+            </h1>
           </div>
-          <p className="max-w-md text-sm leading-relaxed text-secondary sm:text-right">
-            Workload, recovery, conditions, and recent movement derived from observed activity data.
+          <p className="hidden font-mono text-[9px] uppercase tracking-[0.22em] text-secondary sm:block">
+            Workload · recovery · conditions
           </p>
         </header>
         {error && (
-          <div className="rounded-xl border border-warning/30 bg-warning/10 px-4 py-3 text-center text-sm text-warning">
+          <div className="border border-warning/30 bg-warning/10 px-4 py-3 text-center text-sm text-warning">
             {error}
             <RecoveryActions />
           </div>
         )}
-        <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_320px]">
+        <TelemetryStrip trends={trends} />
+        <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_300px]">
           <CoachingCard
             recommendation={recommendation}
             loading={coachingLoading}

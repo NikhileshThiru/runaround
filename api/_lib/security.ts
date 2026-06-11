@@ -7,8 +7,8 @@ import {
   scryptSync,
   timingSafeEqual,
 } from 'node:crypto'
-import type { ApiRequest } from './http'
-import { cookies } from './http'
+import type { ApiRequest } from './http.js'
+import { cookies } from './http.js'
 
 export const OWNER_COOKIE = 'runaround_owner'
 export const STRAVA_TOKEN_COOKIE = 'runaround_strava'

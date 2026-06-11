@@ -1,5 +1,5 @@
-import type { ApiRequest, ApiResponse } from './_lib/http'
-import { isOwnerRequest } from './_lib/security'
+import type { ApiRequest, ApiResponse } from './_lib/http.js'
+import { isOwnerRequest } from './_lib/security.js'
 
 export default function handler(request: ApiRequest, response: ApiResponse): void {
   if (request.method !== 'GET') {

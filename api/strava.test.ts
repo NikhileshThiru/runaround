@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { parseOperation } from './strava'
+import { parseOperation } from './strava.js'
 
 describe('Strava proxy operation allowlist', () => {
   it('allows supported operations with bounded values', () => {
