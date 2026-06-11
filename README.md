@@ -3,6 +3,8 @@
 [![CI](https://github.com/NikhileshThiru/runaround/actions/workflows/ci.yml/badge.svg)](https://github.com/NikhileshThiru/runaround/actions/workflows/ci.yml)
 **Live demo:** [run-around.vercel.app](https://run-around.vercel.app)
 
+![RunAround journey console](public/og-image.png)
+
 RunAround is a single-athlete running intelligence platform that turns Strava history into an adaptive coaching dashboard and a long-term 3D journey through every U.S. state and around the world.
 
 The application is designed as a portfolio project and a real personal tool. Public visitors receive a sanitized, read-only snapshot. Only the owner can synchronize Strava, request Gemini coaching, inspect private activity data, or publish a new snapshot.
@@ -23,6 +25,8 @@ The application is designed as a portfolio project and a real personal tool. Pub
 ```mermaid
 flowchart LR
   Public[Public visitor] --> Snapshot[Sanitized snapshot.json]
+  Public --> Kudos[Kudos function]
+  Kudos --> Redis[(Upstash Redis)]
   Snapshot --> React[React + TypeScript UI]
   Maps[Bundled Natural Earth vectors] --> React
 
@@ -35,8 +39,8 @@ flowchart LR
   API --> Owner
   Owner --> IDB[(Private IndexedDB cache)]
   IDB --> Profile[Adaptive athlete profile]
-  Profile --> Export[Sanitized snapshot export]
-  Export --> Snapshot
+  Profile --> Sanitizer[createPublicSnapshot sanitization boundary]
+  Sanitizer --> Snapshot
 ```
 
 ## Security Model
@@ -55,7 +59,7 @@ flowchart LR
 
 The route is a virtual narrative, not a street-navigation claim. A versioned manifest defines one milestone in every state followed by global milestones. Consecutive segment lengths use the haversine formula. Current position uses spherical interpolation, including date-line and antipodal safeguards.
 
-The U.S. stage uses all 50 state capitals. Country and state outlines are bundled from public-domain Natural Earth GeoJSON, so the globe does not rely on a map CDN at runtime. The globe is a hand-built Three.js scene: a fresnel-shaded opaque sphere, depth-tested vector boundaries, a glowing tube along the traveled great-circle route, raycast milestone tooltips with click-to-fly camera moves, and a pulsing current-position marker. Far-side geometry is occluded by the opaque sphere, and rendering pauses while the globe is off-screen.
+The U.S. stage uses all 50 state capitals. Country and state outlines are bundled from public-domain Natural Earth GeoJSON, so the globe does not rely on a map CDN at runtime. The globe is a hand-built Three.js scene: a fresnel-shaded opaque sphere, depth-tested vector boundaries, a screen-space route line whose pixel width adapts to zoom, raycast milestone tooltips with click-to-fly camera moves, and a directional current-position arrow aimed along the great circle toward the next milestone. Far-side geometry is occluded by the opaque sphere, and rendering pauses while the globe is off-screen.
 
 All positive-distance Strava activities contribute to **Lifetime Movement**. Progress clamps at the final Atlanta milestone and preserves excess lifetime mileage without automatically looping.
 
@@ -80,7 +84,11 @@ STRAVA_CLIENT_SECRET=
 GEMINI_API_KEY=
 OWNER_PASSWORD_HASH=
 SESSION_SECRET=
+KV_REST_API_URL=      # optional: kudos counter (Upstash Redis)
+KV_REST_API_TOKEN=    # optional: kudos counter (Upstash Redis)
 ```
+
+The kudos variables are optional: without them `/api/kudos` answers 503 and the landing-page button stays hidden.
 
 Generate the owner password hash locally:
 
@@ -97,7 +105,7 @@ npm run test:e2e
 npm run build
 ```
 
-Unit tests cover route integrity, state-polygon coordinate validation, spherical calculations, exact PB extraction, estimated load, EWMA decay, adaptive safety constraints, cache behavior, OAuth/token handling, and provider boundaries. Playwright covers public navigation, responsive overflow, modal keyboard behavior, globe rendering, and mocked owner lock/unlock.
+Unit tests cover route integrity, state-polygon coordinate validation, spherical calculations and projection, exact PB extraction, estimated load, EWMA decay, adaptive safety constraints, cache behavior, OAuth/token handling, kudos dedupe, and provider boundaries. Playwright covers public navigation, responsive overflow, modal keyboard behavior, globe rendering, the kudos flow, and mocked owner lock/unlock.
 
 ## Public Snapshot Workflow
 
@@ -123,7 +131,7 @@ vercel deploy
 
 ## Technical Decisions
 
-- The globe is a custom Three.js scene rather than a globe wrapper library, which keeps the lazy renderer chunk under 540 KB raw (≈138 KB gzip, down from 1.75 MB raw with react-globe.gl) while the initial application remains roughly 100 KB gzip.
+- The globe is a custom Three.js scene rather than a globe wrapper library, which keeps the lazy renderer chunk around 570 KB raw (≈147 KB gzip, down from 1.75 MB raw with react-globe.gl) while the initial application remains roughly 100 KB gzip.
 - Public mode never requests browser geolocation. Visitors see a fixed sample weather card; live weather activates only after owner authentication.
 
 | Decision | Reason |
