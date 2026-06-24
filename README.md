@@ -3,22 +3,78 @@
 [![CI](https://github.com/NikhileshThiru/runaround/actions/workflows/ci.yml/badge.svg)](https://github.com/NikhileshThiru/runaround/actions/workflows/ci.yml)
 **Live demo:** [run-around.vercel.app](https://run-around.vercel.app)
 
+RunAround is a single-athlete running intelligence platform. It turns Strava history into a public-safe portfolio dashboard, a private owner console, and a long-term 3D journey through every U.S. state and around the world.
+
+Public visitors see deterministic demo data from `public/data/snapshot.json`. The owner can unlock private mode to sync Strava, cache activity detail locally, request Gemini coaching through serverless functions, and publish a sanitized snapshot deliberately. Private GPS streams, tokens, Strava IDs, activity names, exact start times, and provider metadata are never included in the public snapshot.
+
 ![RunAround journey console](public/og-image.png)
 
-RunAround is a single-athlete running intelligence platform that turns Strava history into an adaptive coaching dashboard and a long-term 3D journey through every U.S. state and around the world.
+![RunAround performance dashboard](public/screenshots/dashboard.png)
 
-The application is designed as a portfolio project and a real personal tool. Public visitors receive a sanitized, read-only snapshot. Only the owner can synchronize Strava, request Gemini coaching, inspect private activity data, or publish a new snapshot.
+## What To Review
+
+- **Custom globe:** `src/components/Globe/globeScene.ts` and `src/lib/globeRoute.ts` implement a hand-built Three.js globe, depth-tested Natural Earth vectors, great-circle routing, current-position interpolation, tooltip raycasting, and reduced-motion behavior.
+- **Athlete intelligence:** `src/lib/athleteProfile.ts` computes adaptive estimated load, CTL, ATL, form, weekly baselines, cadence normalization, and fatigue flags from observed activity history.
+- **Provider boundaries:** `api/strava.ts`, `api/gemini.ts`, and `api/_lib/security.ts` keep Strava and Gemini behind owner-only serverless routes, signed HTTP-only cookies, same-origin checks, and strict operation allowlists.
+- **Public data safety:** `src/lib/publicSnapshot.ts`, `scripts/generateDemoSnapshot.ts`, and `scripts/publishSnapshot.ts` enforce a static, Zod-validated, denylist-by-construction public artifact.
+- **Verification:** Vitest covers algorithms, sync behavior, provider security, AI safety, weather logic, and snapshot sanitation. Playwright covers public navigation, responsive layouts, owner modal behavior, kudos, and activity detail interaction.
 
 ## Product Highlights
 
-- Custom-built Three.js globe with a versioned state-capital-to-world milestone route, raycast milestone tooltips, and cinematic camera flights
-- Exact Strava-reported mile, 5K, 10K, half-marathon, and marathon best efforts
-- Incremental Strava synchronization with resumable rate-limit-aware history scanning
-- Adaptive CTL, ATL, form, weekly mileage, pace, heart-rate, and cadence analysis
-- Deterministic coaching safety constraints around fatigue, hard-effort spacing, and mileage progression
-- Gemini structured output behind an owner-only serverless proxy
-- Sanitized public portfolio mode without GPS data, Strava identifiers, tokens, or private metadata
-- Strava-style public kudos counter backed by Upstash Redis with salted-hash visitor dedupe
+- Mission-control interface with a cyan HUD design system, dense telemetry, and restrained live-signal glow.
+- Versioned Atlanta-to-50-states-to-world virtual route driven by all positive-distance movement.
+- Exact personal best model based on Strava-reported `best_efforts`, never average-pace guesses.
+- Twelve-week mileage and load charts, thirty-day pace, heart-rate, and cadence trends, and accessible chart summaries.
+- Deterministic coaching guardrails before Gemini is called: fatigue floor, hard-effort spacing, and weekly mileage ceiling.
+- Owner-only AI assessments cached by activity, with collapsed feed summaries computed locally.
+- Sample public weather card without geolocation prompts; live Open-Meteo weather only activates in owner mode.
+- Optional public kudos counter through Upstash Redis that disappears when the datastore is not configured.
+
+## Run Locally
+
+Requirements:
+
+- Node.js 22 or newer
+- npm
+
+```bash
+npm install
+npm run dev
+```
+
+`npm run dev` is enough to review the public demo. Use `npm run dev:full` when testing Vercel serverless functions and owner-only API flows.
+
+Create local values from `.env.example` only when testing private owner features:
+
+```text
+VITE_STRAVA_CLIENT_ID=
+STRAVA_CLIENT_SECRET=
+GEMINI_API_KEY=
+OWNER_PASSWORD_HASH=
+SESSION_SECRET=
+KV_REST_API_URL=      # optional: kudos counter
+KV_REST_API_TOKEN=    # optional: kudos counter
+```
+
+All values except `VITE_STRAVA_CLIENT_ID` are server-only. Do not add a `VITE_` prefix to secrets.
+
+Generate the owner password hash locally:
+
+```bash
+npm run owner:hash-password -- "a-long-private-password"
+```
+
+## Verification
+
+```bash
+npm run typecheck
+npm run lint
+npm test
+npm run build
+npm run test:e2e
+```
+
+The Playwright suite starts a production preview automatically unless `PLAYWRIGHT_BASE_URL` is set.
 
 ## Architecture
 
@@ -39,111 +95,75 @@ flowchart LR
   API --> Owner
   Owner --> IDB[(Private IndexedDB cache)]
   IDB --> Profile[Adaptive athlete profile]
-  Profile --> Sanitizer[createPublicSnapshot sanitization boundary]
+  Profile --> Sanitizer[createPublicSnapshot]
   Sanitizer --> Snapshot
 ```
 
+The public application reads only the static snapshot and bundled geography. Owner mode uses IndexedDB as the private working cache, while Strava tokens remain in encrypted HTTP-only cookies and Gemini requests pass through an owner-only proxy.
+
 ## Security Model
 
-- Strava access and refresh tokens exist only in encrypted, HTTP-only, same-site cookies.
-- OAuth uses a cryptographically random state cookie and validates the granted scope.
-- Gemini and Strava server operations require a valid owner session.
-- State-changing requests require an exact same-origin request.
-- The Strava proxy exposes a fixed operation allowlist and never accepts arbitrary URLs.
-- Latitude/longitude streams are not requested or stored in the MVP.
-- Gemini receives strict metric allowlists without activity names, Strava IDs, maps, coordinates, or raw provider extras.
-- Public snapshots exclude athlete IDs, Strava activity IDs, activity names, exact times, GPS data, raw streams, gear, and descriptions.
-- The kudos counter stores no personal data: visitors are deduplicated by a salted SHA-256 hash of the request IP that expires after 24 hours, and the endpoint degrades to a hidden control when the datastore is absent.
+- Strava access and refresh tokens never enter browser JavaScript, localStorage, IndexedDB, or public JSON.
+- OAuth uses a cryptographically random state cookie and validates the returned scope.
+- State-changing API calls require a valid owner session, same-origin `Origin`, and POST.
+- The Strava proxy exposes named operations instead of arbitrary URLs and rejects latitude/longitude streams.
+- Gemini prompts are built from strict metric allowlists and exclude activity names, Strava IDs, maps, coordinates, gear, raw streams, and provider passthrough fields.
+- Public snapshots exclude athlete IDs, Strava activity IDs, names, exact times, GPS data, raw streams, gear IDs, descriptions, external IDs, and private metadata.
+- The kudos endpoint stores no personal data: visitor dedupe uses a salted SHA-256 IP hash with a 24-hour expiry and fails closed by hiding the UI.
 
-## Route Algorithm
+## Route And Metrics
 
-The route is a virtual narrative, not a street-navigation claim. A versioned manifest defines one milestone in every state followed by global milestones. Consecutive segment lengths use the haversine formula. Current position uses spherical interpolation, including date-line and antipodal safeguards.
+The globe route is a virtual journey, not a street-navigation claim. A versioned manifest starts in Atlanta, visits every U.S. state capital exactly once, continues through global milestones, and returns to Atlanta. Segment distances use haversine great-circle math, and current position uses spherical interpolation with date-line and numerical edge-case handling.
 
-The U.S. stage uses all 50 state capitals. Country and state outlines are bundled from public-domain Natural Earth GeoJSON, so the globe does not rely on a map CDN at runtime. The globe is a hand-built Three.js scene: a fresnel-shaded opaque sphere, depth-tested vector boundaries, a screen-space route line whose pixel width adapts to zoom, raycast milestone tooltips with click-to-fly camera moves, and a directional current-position arrow aimed along the great circle toward the next milestone. Far-side geometry is occluded by the opaque sphere, and rendering pauses while the globe is off-screen.
+All positive-distance activities advance **Lifetime Movement**. Progress clamps at the final Atlanta milestone and preserves excess mileage without silently starting another lap.
 
-All positive-distance Strava activities contribute to **Lifetime Movement**. Progress clamps at the final Atlanta milestone and preserves excess lifetime mileage without automatically looping.
+Training load is intentionally labeled **estimated load score** because it is a project-specific heuristic:
 
-## Local Development
-
-Requirements:
-
-- Node.js 22 or newer
-- npm
-- Vercel CLI, installed through the project dependencies
-
-```bash
-npm install
-npm run dev:full
-```
-
-Create local values from `.env.example`. Secrets must never receive a `VITE_` prefix; the Strava client ID is intentionally public and is not a credential.
-
-```text
-VITE_STRAVA_CLIENT_ID=
-STRAVA_CLIENT_SECRET=
-GEMINI_API_KEY=
-OWNER_PASSWORD_HASH=
-SESSION_SECRET=
-KV_REST_API_URL=      # optional: kudos counter (Upstash Redis)
-KV_REST_API_TOKEN=    # optional: kudos counter (Upstash Redis)
-```
-
-The kudos variables are optional: without them `/api/kudos` answers 503 and the landing-page button stays hidden.
-
-Generate the owner password hash locally:
-
-```bash
-npm run owner:hash-password -- "a-long-private-password"
-```
-
-## Verification
-
-```bash
-npm run typecheck
-npm test
-npm run test:e2e
-npm run build
-```
-
-Unit tests cover route integrity, state-polygon coordinate validation, spherical calculations and projection, exact PB extraction, estimated load, EWMA decay, adaptive safety constraints, cache behavior, OAuth/token handling, kudos dedupe, and provider boundaries. Playwright covers public navigation, responsive overflow, modal keyboard behavior, globe rendering, the kudos flow, and mocked owner lock/unlock.
+- **CTL:** 42-day exponentially weighted average of daily estimated load.
+- **ATL:** 7-day exponentially weighted average of daily estimated load.
+- **Form:** CTL minus ATL; positive generally means fresher, negative means more fatigue.
+- **Baseline:** median mileage from up to the last six completed Monday-Sunday weeks, with at least two weeks required.
 
 ## Public Snapshot Workflow
 
-The repository ships a deterministic demo snapshot so public visitors can explore every feature: a 35-state journey on the globe, lifetime stats and personal bests, twelve recent multi-sport activities with charts, training trends, a static coaching recommendation, and fixed sample weather. The demo data comes from a seeded generator, is validated by the same Zod schema as real exports, and never touches Strava, Gemini, or the forecast API:
+The committed demo snapshot is deterministic synthetic data generated by:
 
 ```bash
 npm run snapshot:demo
 ```
 
-Publishing different public data is a separate deliberate step. `createPublicSnapshot` in `src/lib/publicSnapshot.ts` is the tested sanitization boundary for building a snapshot from real owner data, and the publish script validates any snapshot file with Zod before replacing `public/data/snapshot.json`:
+Publishing different public data is deliberate:
 
 ```bash
 npm run snapshot:publish -- ./path/to/snapshot.json
 vercel deploy
 ```
 
-## Training Metric Definitions
+`snapshot:publish` validates the file with the same public schema used at runtime before replacing `public/data/snapshot.json`.
 
-- **Baseline:** median running mileage from up to the last six completed Monday-Sunday weeks, provided at least two completed weeks exist. It describes recent normal volume rather than prescribing a target.
-- **CTL:** 42-day exponentially weighted average of daily estimated load, representing the slower long-term workload trend.
-- **ATL:** 7-day exponentially weighted average of daily estimated load, representing faster-changing short-term fatigue.
-- **Form:** CTL minus ATL. Positive values generally indicate more freshness; negative values indicate more accumulated fatigue. It is a workload signal, not a medical assessment.
+## Private Deployment Checklist
+
+Provider verification requires the owner's real credentials and external accounts, so these checks are manual when preparing a production deployment:
+
+1. Configure Vercel environment variables from `.env.example`, including optional `KV_REST_API_*` only if kudos should be shared.
+2. Set the Strava OAuth callback to the deployed `/api/strava-callback` URL.
+3. Verify `/` and `/dashboard` load publicly with no geolocation prompt and no owner controls exposed beyond the locked Owner button.
+4. Unlock owner mode, start Strava OAuth, complete the callback, and confirm tokens remain absent from browser storage and URLs.
+5. Run an incremental sync, open an activity detail panel, and confirm streams exclude `latlng`.
+6. Request a coaching recommendation and confirm Gemini calls go only through `/api/gemini`.
+7. Publish a sanitized snapshot only after reviewing that no private fields appear in `public/data/snapshot.json`.
 
 ## Technical Decisions
 
-- The globe is a custom Three.js scene rather than a globe wrapper library, which keeps the lazy renderer chunk around 570 KB raw (≈147 KB gzip, down from 1.75 MB raw with react-globe.gl) while the initial application remains roughly 100 KB gzip.
-- Public mode never requests browser geolocation. Visitors see a fixed sample weather card; live weather activates only after owner authentication.
-
 | Decision | Reason |
 |---|---|
-| TypeScript + Zod | Provider and AI payloads need compile-time and runtime validation. |
-| IndexedDB | Activity details and chart streams are too large for synchronous localStorage. |
-| Date-keyed localStorage coaching cache | The validated recommendation is small and must be reused at most once per local calendar day. |
+| React + TypeScript + Zod | Provider, AI, cache, and snapshot boundaries need typed code and runtime validation. |
+| Custom Three.js globe | Direct scene ownership enables shaders, depth-tested vectors, camera flights, raycast tooltips, render pausing, and a smaller renderer chunk than a wrapper. |
+| IndexedDB private cache | Activity details and chart streams are too large for synchronous localStorage. |
+| Date-keyed localStorage coaching cache | The validated daily recommendation is small and should be reused for the local calendar day. |
 | Secure cookies + same-origin proxy | Provider credentials must never enter browser JavaScript. |
-| Static public snapshot | Recruiters can explore real results without access to private controls or data. |
-| Haversine route instead of road routing | The feature remains deterministic, testable, and independent of a navigation vendor. |
-| Bundled Natural Earth vectors | Geography stays sharp and available without a runtime map CDN or photographic Earth texture. |
-| Custom Three.js globe scene | Direct control of shaders, camera flights, raycast tooltips, and render pausing at roughly a third of the wrapper-library bundle size. |
-| Exact Strava `best_efforts` scan | Personal bests are reported facts, not pace-based estimates. |
+| Static public snapshot | Recruiters can explore the full product without private credentials or provider calls. |
+| Haversine route | The journey stays deterministic, testable, and independent of routing vendors. |
+| Exact Strava `best_efforts` scan | Personal bests are reported facts, not inferred from whole-activity pace. |
 | Deterministic coaching guardrails | Safety constraints do not depend on model compliance. |
-| Owner-managed Git + Vercel CLI | The owner controls all version history, remotes, and deployments manually. |
+| Owner-managed Git + Vercel CLI | The owner controls version history, remotes, and deployments manually. |

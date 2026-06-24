@@ -1,7 +1,22 @@
+# Local secrets and generated artifacts must not deploy.
+.env
+.env.*
+!.env.example
+.vercel/
+node_modules/
+dist/
+coverage/
+playwright-report/
+test-results/
+*.log
+.DS_Store
+
+# Local working docs, not part of the deployed app.
+AGENTS.md
+TASKS.md
+
 # Test files must not deploy as serverless functions.
 api/**/*.test.ts
 src/**/*.test.ts
 src/**/*.test.tsx
 tests/
-playwright-report/
-test-results/

@@ -20,6 +20,18 @@ test('public dashboard renders coaching, trends, sample weather, and the demo ac
   await expect(page.getByText('12 shown')).toBeVisible()
 })
 
+test('public activity detail panel opens with charts and closes from the keyboard', async ({ page }) => {
+  await page.goto('/dashboard')
+
+  await page.getByRole('button', { name: /12\.2 mile run/i }).click()
+  const dialog = page.getByRole('dialog', { name: /activity detail/i })
+  await expect(dialog).toBeVisible()
+  await expect(dialog.getByText(/measured effort/i)).toBeVisible()
+  await expect(dialog.getByRole('heading', { name: 'Pace', exact: true })).toBeVisible()
+  await page.keyboard.press('Escape')
+  await expect(dialog).toBeHidden()
+})
+
 test('mobile public layout does not overflow horizontally', async ({ page }) => {
   await page.setViewportSize({ width: 375, height: 812 })
   await page.emulateMedia({ reducedMotion: 'reduce' })
